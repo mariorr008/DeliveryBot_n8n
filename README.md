@@ -322,3 +322,170 @@ Proyecto desarrollado por **MARIO ROJAS** como solución académica utilizando *
 
 # Cocina Bot
 ![alt text](image-2.png)
+
+
+# UPDATE: Examen 1 
+
+# Sistema de Acumulación de Puntos para Bot de Cafetería
+
+## Descripción
+
+Se implementó un sistema de fidelización para el bot de la cafetería con el objetivo de incentivar las compras mediante la acumulación de puntos.
+
+Por cada pedido confirmado, el usuario recibe puntos de acuerdo con el valor total de su compra. Estos puntos son almacenados en el perfil del usuario y pueden consultarse desde el menú principal del bot.
+
+---
+
+# Objetivos
+
+- Calcular automáticamente los puntos obtenidos en cada compra.
+- Actualizar el perfil del usuario con el nuevo saldo de puntos.
+- Permitir al usuario consultar sus puntos acumulados desde el menú principal.
+
+---
+
+# Requerimientos Implementados
+
+## 1. Lógica de Cálculo
+
+Durante el flujo de **Confirmación del Pedido** se realiza el cálculo de puntos mediante una expresión matemática.
+
+### Regla de negocio
+
+- **1 punto por cada $4.000 COP gastados.**
+
+### Expresión utilizada
+ 
+```javascript
+Math.floor(totalCompra / 4000)
+```
+![alt text](image-3.png)
+
+Donde:
+
+- `totalCompra` corresponde al valor total del pedido.
+- `Math.floor()` garantiza que únicamente se otorguen puntos completos.
+
+### Ejemplos
+
+| Total de compra | Puntos obtenidos |
+|----------------:|----------------:|
+| $3.500 | 0 |ªº
+| $8.000 | 2 |
+| $12.500 | 3 |
+| $25.000 | 6 |
+| $40.000 | 10 |
+
+---
+
+## 2. Persistencia de Datos
+
+Una vez calculados los puntos:
+
+1. Se busca al usuario en la hoja **USUARIOS** utilizando el campo:
+
+```text
+telegram_id
+```
+
+2. Se obtiene el saldo actual de puntos.
+
+3. Se realiza la suma:
+
+```text
+Puntos Nuevos = Puntos Actuales + Puntos Ganados
+```
+
+4. Finalmente se actualiza el registro del usuario en la hoja de cálculo.
+
+### Ejemplo
+
+Antes:
+
+| telegram_id | Nombre | Puntos |
+|-------------|---------|--------|
+| 123456789 | Juan | 18 |
+
+Compra realizada:
+
+```text
+$16.000
+```
+
+Puntos ganados:
+
+```text
+4
+```
+
+Después de actualizar:
+
+| telegram_id | Nombre | Puntos |
+|-------------|---------|--------|
+| 123456789 | Juan | 22 |
+
+---
+
+## 3. Menú Principal
+
+Se agregó una nueva opción al menú principal:
+
+```text
+1. Hacer Pedido
+
+2. Ver Menú
+
+3. Mis Pedidos
+
+4. Ver mis Puntos
+```
+
+Al seleccionar la opción **4**, el bot consulta el registro del usuario y obtiene el valor almacenado en la columna de puntos.
+
+---
+
+## 4. Respuesta del Bot
+
+Cuando el usuario consulta su saldo de puntos, el bot responde con el siguiente mensaje:
+
+```text
+Hola [Nombre], actualmente tienes 🏆 [Puntos] puntos acumulados.
+
+¡Sigue comprando para canjear premios!
+```
+
+![alt text](image-4.png)
+
+
+### Ejemplo
+
+```text
+Hola Juan,
+
+Actualmente tienes 🏆 22 puntos acumulados.
+
+¡Sigue comprando para canjear premios!
+```
+
+---
+
+# Tecnologías Utilizadas
+
+- Telegram Bot
+- n8n
+- Google Sheets
+- Nodo **Set** o **Edit Fields** para el cálculo matemático
+- Expresiones en JavaScript
+
+---
+
+# Resultado
+
+Con esta implementación se cumple el sistema de fidelización solicitado:
+
+- ✅ Cálculo automático de puntos por compra.
+- ✅ Uso de una expresión matemática para el cálculo.
+- ✅ Actualización del saldo de puntos del usuario.
+- ✅ Persistencia de la información en la hoja **USUARIOS**.
+- ✅ Nueva opción **"Ver mis Puntos"** en el menú principal.
+- ✅ Respuesta personalizada mostrando el total de puntos acumulados.
